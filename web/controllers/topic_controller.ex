@@ -12,6 +12,8 @@ defmodule Discuss.TopicController do
   # 2. Use - fancy setup between modules
   # https://elixir-lang.org/getting-started/alias-require-and-import.html
 
+  # Underscore pre-pended to variable name means ignore it.
+
   def new(conn, _params) do
     # %Plug.Con = both request and response (Struct)
     changeset = Topic.changeset(%Topic{}, %{})
@@ -25,6 +27,20 @@ defmodule Discuss.TopicController do
     # params = %{"topic" => "adsf" } -> string map (pattern match)
     # Pattern matching:
     # %{"topic" => string} = params
+    changeset = Topic.changeset(%Topic{}, topic)
 
+    case Repo.insert(changeset) do
+      {:ok, post} -> IO.inspect (post)
+      {:error, changeset} ->
+        render conn, "new.html", changeset: changeset
+    end
+
+  end
+
+  def index(conn, _params) do
+    # Discuss.Top
+    topics = Repo.all(Topic)
+    # Make topics available in the view
+    render conn, "index.html", topics: topics
   end
 end
